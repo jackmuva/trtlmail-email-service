@@ -1,6 +1,8 @@
 package com.jackmu.scemail.service;
 
 import com.jackmu.scemail.repository.SubscriptionRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -15,52 +17,13 @@ import java.util.logging.Logger;
 import com.jackmu.scemail.model.EntryEmailDTO;
 
 @Service
-public class EmailServiceImpl implements EmailService{
-    private Boolean localMode = false;
-    private static final Logger LOGGER = Logger.getLogger(EmailServiceImpl.class.getName());
+@Profile("local")
+public class EmailServiceLocal implements EmailService{
+    @Autowired
     private SubscriptionRepository subscriptionRepository;
 
-    @Override
-    public void setLocalMode(Boolean bool){
-        localMode = bool;
-    }
 
-    @Override
     public void sendEmails(List<EntryEmailDTO> entryEmailDTOList){
-        if(localMode){
-            sendLogEmails(entryEmailDTOList);
-        }
-        else {
-            sendRealEmail(entryEmailDTOList);
-        }
-    }
-
-    @Override
-    public void sendLogEmails(List<EntryEmailDTO> entryEmailDTOList){
-        for(EntryEmailDTO entryEmail : entryEmailDTOList){
-            String sender = "sender@gmail.com";
-            String host = "127.0.0.1";
-            Properties properties = System.getProperties();
-            properties.setProperty("mail.smtp.host", host);
-            Session session = Session.getDefaultInstance(properties);
-            try {
-                MimeMessage message = new MimeMessage(session);
-                message.setFrom(new InternetAddress(sender));
-                message.addRecipient(Message.RecipientType.TO, new InternetAddress(entryEmail.getSubscriberEmail()));
-                message.setSubject(entryEmail.getEntryTitle());
-                message.setContent(entryEmail.getEntryText(),"text/html");
-
-                LOGGER.info(message.getRecipients(Message.RecipientType.TO).toString());
-                LOGGER.info(message.getContent().toString());
-            }
-            catch (Exception e) {
-                LOGGER.warning("Failed to create message");
-            }
-        }
-    }
-
-    @Override
-    public void sendRealEmail(List<EntryEmailDTO> entryEmailDTOList){
         for(EntryEmailDTO entryEmail : entryEmailDTOList){
             String sender = "sender@gmail.com";
             String host = "127.0.0.1";
@@ -86,7 +49,6 @@ public class EmailServiceImpl implements EmailService{
     @Scheduled(cron = "0 6 * * *")
     public void scheduleSendEmails(){
         List<EntryEmailDTO> readyEmails = subscriptionRepository.findEmailsBySendDate();
-        setLocalMode(true);
         sendEmails(readyEmails);
     }
 
