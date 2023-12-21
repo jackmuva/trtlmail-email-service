@@ -1,8 +1,6 @@
 package com.jackmu.scemail.service;
 
 import com.jackmu.scemail.repository.SubscriptionRepository;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.mail.SimpleMailMessage;
@@ -11,10 +9,11 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.logging.Logger;
 import com.jackmu.scemail.model.EntryEmailDTO;
+
+import javax.mail.internet.MimeMessage;
 
 @Service
 @Profile("!local")
@@ -30,27 +29,17 @@ public class EmailServiceAws implements EmailService{
         LOGGER.info("sending email");
         for (EntryEmailDTO entryEmail : entryEmailDTOList) {
             try {
-//                MimeMessage message = mailSender.createMimeMessage();
-//                MimeMessageHelper helper = new MimeMessageHelper(message);
-//                helper.setFrom("trtlmail@trtlmail.com", "My email address");
-//                helper.setTo(entryEmail.getSubscriberEmail());
-//                helper.setSubject(entryEmail.getSeriesTitle() + " : " + entryEmail.getEntryTitle());
-//                helper.setText(entryEmail.getEntryText(), true);
-                SimpleMailMessage message = new SimpleMailMessage();
-                message.setSubject(entryEmail.getSeriesTitle() + " : " + entryEmail.getEntryTitle());
-                message.setFrom("jackmu@umich.edu");
-                message.setTo(entryEmail.getSubscriberEmail());
-                message.setText(entryEmail.getEntryText());
+                MimeMessage message = mailSender.createMimeMessage();
+                MimeMessageHelper helper = new MimeMessageHelper(message);
+                helper.setFrom("jackmu@umich.edu", "My email address");
+                helper.setTo(entryEmail.getSubscriberEmail());
+                helper.setSubject(entryEmail.getSeriesTitle() + " : " + entryEmail.getEntryTitle());
+                helper.setText(entryEmail.getEntryText(), true);
 
                 mailSender.send(message);
             } catch(Exception e){
                 e.printStackTrace();
             }
-//            } catch (MessagingException mex) {
-//                mex.printStackTrace();
-//            } catch (UnsupportedEncodingException e) {
-//                throw new RuntimeException(e);
-//            }
         }
     }
 
