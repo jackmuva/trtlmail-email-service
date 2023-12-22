@@ -11,6 +11,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import com.jackmu.scemail.model.EntryEmailDTO;
 
 import javax.mail.internet.MimeMessage;
@@ -43,12 +46,24 @@ public class EmailServiceAws implements EmailService{
         }
     }
 
+    public String parseEmails(String html){
+        String resHtml = html.substring(2, html.length() - 2);
+
+        resHtml.replaceAll("\",\"(?=[^>]*>)", "");
+
+        return resHtml;
+    }
+
     @Override
     @Scheduled(cron = "0 * * * * MON-FRI")
     public void scheduleSendEmails(){
         LOGGER.info("schedule sent");
         List<EntryEmailDTO> readyEmails = subscriptionRepository.findEmailsBySendDate();
-        sendEmails(readyEmails);
+//        sendEmails(readyEmails);
+        for(EntryEmailDTO entryEmail : readyEmails){
+            LOGGER.info("entered loop");
+            LOGGER.info(parseEmails(entryEmail.getEntryText()));
+        }
     }
 
     @Override
