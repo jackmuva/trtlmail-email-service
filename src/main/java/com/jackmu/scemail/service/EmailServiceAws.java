@@ -37,7 +37,7 @@ public class EmailServiceAws implements EmailService{
                 helper.setFrom("jackmu@umich.edu", "My email address");
                 helper.setTo(entryEmail.getSubscriberEmail());
                 helper.setSubject(entryEmail.getSeriesTitle() + " : " + entryEmail.getEntryTitle());
-                helper.setText(entryEmail.getEntryText(), true);
+                helper.setText(parseEmails(entryEmail.getEntryText()), true);
 
                 mailSender.send(message);
             } catch(Exception e){
@@ -49,7 +49,7 @@ public class EmailServiceAws implements EmailService{
     public String parseEmails(String html){
         String resHtml = html.substring(2, html.length() - 2);
 
-        resHtml.replaceAll("\",\"(?=[^>]*>)", "");
+        resHtml = resHtml.replaceAll("\",\"(?=[^>]*>)", "");
 
         return resHtml;
     }
@@ -59,11 +59,7 @@ public class EmailServiceAws implements EmailService{
     public void scheduleSendEmails(){
         LOGGER.info("schedule sent");
         List<EntryEmailDTO> readyEmails = subscriptionRepository.findEmailsBySendDate();
-//        sendEmails(readyEmails);
-        for(EntryEmailDTO entryEmail : readyEmails){
-            LOGGER.info("entered loop");
-            LOGGER.info(parseEmails(entryEmail.getEntryText()));
-        }
+        sendEmails(readyEmails);
     }
 
     @Override
