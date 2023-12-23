@@ -12,9 +12,6 @@ import java.util.List;
 
 @Repository
 public interface SubscriptionRepository extends JpaRepository<Subscription, Long> {
-    @Modifying
-    @Transactional
-    void deleteBySubscriberEmailAndSeriesId(String email, Long seriesId);
 
     @Modifying
     @Transactional
@@ -28,12 +25,14 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
             "AND article_num >= series.num_entries", nativeQuery = true)
     void deleteFinishedSubscriptions();
 
-    @Query(value = "select Entry.title AS entryTitle, Entry.entry_html AS entryText, Subscription.subscriber_Email AS subscriberEmail, Series.title AS seriesTitle " +
+    @Query(value = "select distinct Entry.title AS entryTitle, Entry.entry_html AS entryText, Series.title AS seriesTitle, " +
+            "Subscription.series_id AS seriesId, Subscription.article_num AS articleNum " +
             "FROM Subscription LEFT JOIN Entry ON Entry.series_Id = Subscription.series_Id AND Subscription.article_num = entry.order_num " +
             "LEFT join Series ON Series.series_Id = Subscription.series_Id " +
-            "WHERE Subscription.send_Date = CURRENT_DATE " +
-            "ORDER BY seriesTitle, entryTitle", nativeQuery = true)
+            "WHERE Subscription.send_Date = CURRENT_DATE ", nativeQuery = true)
     List<EntryEmailDTO> findEmailsBySendDate();
+
+    List<Subscription> findAllByArticleNumAndSeriesId(Integer articleNum, Long seriesId);
 
     @Modifying
     @Transactional

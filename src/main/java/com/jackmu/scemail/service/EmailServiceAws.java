@@ -1,18 +1,17 @@
 package com.jackmu.scemail.service;
 
+import com.jackmu.scemail.model.Subscription;
 import com.jackmu.scemail.repository.SubscriptionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.jackmu.scemail.model.EntryEmailDTO;
 
@@ -33,8 +32,8 @@ public class EmailServiceAws implements EmailService{
             try {
                 MimeMessage message = mailSender.createMimeMessage();
                 MimeMessageHelper helper = new MimeMessageHelper(message);
+                helper.setBcc(getEmails(entryEmail));
                 helper.setFrom("jackmu@umich.edu", "My email address");
-                helper.setTo(entryEmail.getSubscriberEmail());
                 helper.setSubject(entryEmail.getSeriesTitle() + " : " + entryEmail.getEntryTitle());
                 helper.setText(parseEmails(entryEmail.getEntryText()), true);
 
@@ -43,6 +42,15 @@ public class EmailServiceAws implements EmailService{
                 e.printStackTrace();
             }
         }
+    }
+
+    public String[] getEmails(EntryEmailDTO entryEmail){
+        List<String> emails = new ArrayList<>();
+        List<Subscription> subscriptions = subscriptionRepository.findAllByArticleNumAndSeriesId(entryEmail.getArticleNum(), entryEmail.getSeriesId());
+        for(Subscription subscription : subscriptions){
+            emails.add(subscription.getSubscriberEmail());
+        }
+        return emails.toArray(new String[0]);
     }
 
     public String parseEmails(String html){
@@ -55,7 +63,7 @@ public class EmailServiceAws implements EmailService{
     }
 
     @Override
-    @Scheduled(cron = "0 * * * * MON-FRI")
+    @Scheduled(cron = "0 * * * * *")
     public void scheduleSendEmails(){
         List<EntryEmailDTO> readyEmails = subscriptionRepository.findEmailsBySendDate();
         sendEmails(readyEmails);
