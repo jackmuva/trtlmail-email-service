@@ -29,7 +29,6 @@ public class EmailServiceAws implements EmailService{
 
 
     public void sendEmails(List<EntryEmailDTO> entryEmailDTOList) {
-        LOGGER.info("sending email");
         for (EntryEmailDTO entryEmail : entryEmailDTOList) {
             try {
                 MimeMessage message = mailSender.createMimeMessage();
@@ -50,6 +49,7 @@ public class EmailServiceAws implements EmailService{
         String resHtml = html.substring(2, html.length() - 2);
 
         resHtml = resHtml.replaceAll("\",\"(?=[^>]*>)", "");
+        resHtml = resHtml.replace("\\\"", "\"");
 
         return resHtml;
     }
@@ -57,7 +57,6 @@ public class EmailServiceAws implements EmailService{
     @Override
     @Scheduled(cron = "0 * * * * MON-FRI")
     public void scheduleSendEmails(){
-        LOGGER.info("schedule sent");
         List<EntryEmailDTO> readyEmails = subscriptionRepository.findEmailsBySendDate();
         sendEmails(readyEmails);
     }
