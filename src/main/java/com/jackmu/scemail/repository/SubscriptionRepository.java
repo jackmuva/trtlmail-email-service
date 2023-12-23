@@ -22,7 +22,7 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
     @Transactional
     @Query(value = "DELETE FROM subscription USING series " +
             "WHERE subscription.series_id = series.series_id " +
-            "AND article_num >= series.num_entries", nativeQuery = true)
+            "AND article_num > series.num_entries", nativeQuery = true)
     void deleteFinishedSubscriptions();
 
     @Query(value = "select distinct Entry.title AS entryTitle, Entry.entry_html AS entryText, Series.title AS seriesTitle, " +

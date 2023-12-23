@@ -63,7 +63,7 @@ public class EmailServiceAws implements EmailService{
     }
 
     @Override
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 0 6 * * *")
     public void scheduleSendEmails(){
         List<EntryEmailDTO> readyEmails = subscriptionRepository.findEmailsBySendDate();
         sendEmails(readyEmails);
@@ -77,13 +77,14 @@ public class EmailServiceAws implements EmailService{
 
     @Override
     @Scheduled(cron = "0 0 11 * * *")
+    public void incrementArticleNum(){
+        subscriptionRepository.incrementArticleNum();
+    }
+
+    @Override
+    @Scheduled(cron = "0 0 12 * * *")
     public void deleteFinishedSeries(){
         subscriptionRepository.deleteFinishedSubscriptions();
     }
 
-    @Override
-    @Scheduled(cron = "0 0 13 * * *")
-    public void incrementArticleNum(){
-        subscriptionRepository.incrementArticleNum();
-    }
 }
