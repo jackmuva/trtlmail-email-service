@@ -9,7 +9,7 @@ echo "building image..."
 docker build -t 514832027284.dkr.ecr.us-east-1.amazonaws.com/trtlmail-email:latest .
 
 echo "updating AWS ECS service..."
-#aws ecs update-service --cluster <cluster-name> --service <service-name> --force-new-deployment
+aws ecs update-service --cluster trtlmail-rest-cluster --service tm-email-sv --force-new-deployment
 
 echo "Post-Build steps:"
 echo "pushing image to AWS ECR"
