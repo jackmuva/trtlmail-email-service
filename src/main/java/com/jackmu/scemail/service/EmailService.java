@@ -7,7 +7,5 @@ import java.util.List;
 public interface EmailService {
     public void sendEmails(List<EntryEmailDTO> entryEmailDTOList);
     public void scheduleSendEmails();
-    public void updateSendDate();
     public void deleteFinishedSeries();
-    public void incrementArticleNum();
 }

@@ -5,6 +5,7 @@ import com.jackmu.scemail.model.Subscription;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
@@ -15,8 +16,10 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
 
     @Modifying
     @Transactional
-    @Query("UPDATE Subscription SET articleNum = articleNum + 1")
-    void incrementArticleNum();
+    @Query(value = "UPDATE Subscription SET article_num = article_num + 1 " +
+            "WHERE Subscription.series_id = :seriesId AND Subscription.article_num = :articleNum", nativeQuery = true)
+    void incrementArticleNum(@Param("articleNum") Integer articleNum,
+                             @Param("seriesId") Long seriesId);
 
     @Modifying
     @Transactional
@@ -37,6 +40,8 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
     @Modifying
     @Transactional
     @Query(value = "UPDATE Subscription SET send_date = (send_date + (Series.cadence * INTERVAL '1 day')) FROM Series " +
-            "WHERE Subscription.series_id = Series.series_id AND Subscription.send_date = CURRENT_DATE", nativeQuery = true)
-    void updateSendDate();
+            "WHERE Subscription.series_id = Series.series_id AND Subscription.send_date = CURRENT_DATE " +
+            "AND Subscription.article_num = :articleNum AND Subscription.series_id = :seriesId", nativeQuery = true)
+    void updateSendDate(@Param("articleNum") Integer articleNum,
+                        @Param("seriesId") Long seriesId);
 }

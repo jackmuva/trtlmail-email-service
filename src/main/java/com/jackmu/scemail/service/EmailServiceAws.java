@@ -38,6 +38,9 @@ public class EmailServiceAws implements EmailService{
                 helper.setText(parseEmails(entryEmail.getEntryText()), true);
 
                 mailSender.send(message);
+
+                subscriptionRepository.updateSendDate(entryEmail.getArticleNum(), entryEmail.getSeriesId());
+                subscriptionRepository.incrementArticleNum(entryEmail.getArticleNum(), entryEmail.getSeriesId());
             } catch(Exception e){
                 e.printStackTrace();
             }
@@ -70,19 +73,7 @@ public class EmailServiceAws implements EmailService{
     }
 
     @Override
-    @Scheduled(cron = "0 0 10 * * *")
-    public void updateSendDate(){
-        subscriptionRepository.updateSendDate();
-    }
-
-    @Override
-    @Scheduled(cron = "0 0 11 * * *")
-    public void incrementArticleNum(){
-        subscriptionRepository.incrementArticleNum();
-    }
-
-    @Override
-    @Scheduled(cron = "0 0 12 * * *")
+    @Scheduled(cron = "0 0 8 * * *")
     public void deleteFinishedSeries(){
         subscriptionRepository.deleteFinishedSubscriptions();
     }
