@@ -35,7 +35,7 @@ public class EmailServiceAws implements EmailService{
                 helper.setBcc(getEmails(entryEmail));
                 helper.setFrom("jackmu@umich.edu", "My email address");
                 helper.setSubject(entryEmail.getSeriesTitle() + " : " + entryEmail.getEntryTitle());
-                helper.setText(parseEmails(entryEmail.getEntryText()), true);
+                helper.setText(appendUnsubscribeHtml(parseEmails(entryEmail.getEntryText()), entryEmail.getSeriesId()), true);
 
                 mailSender.send(message);
 
@@ -45,6 +45,13 @@ public class EmailServiceAws implements EmailService{
                 e.printStackTrace();
             }
         }
+    }
+
+    public String appendUnsubscribeHtml(String emailHtml, Long seriesId){
+        String unsubMessage = "<br/><br/><p>If you'd like to unsubscribe from this series, please click on the link " +
+                "below and input the <strong>Series Id: " + seriesId + "<strong/></p>" + "<p><a href = \"https://trtlpost.com/unsubscribe\"> " +
+                "https://trtlpost.com/unsubscribe</a></p>";
+        return emailHtml + unsubMessage;
     }
 
     public String[] getEmails(EntryEmailDTO entryEmail){
