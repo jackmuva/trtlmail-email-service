@@ -33,7 +33,7 @@ public class EmailServiceAws implements EmailService{
                 MimeMessage message = mailSender.createMimeMessage();
                 MimeMessageHelper helper = new MimeMessageHelper(message);
                 helper.setBcc(getEmails(entryEmail));
-                helper.setFrom("jackmu@umich.edu", "My email address");
+                helper.setFrom("trtlpost@trtlpost.com", "Trtlpost");
                 helper.setSubject(entryEmail.getSeriesTitle() + " : " + entryEmail.getEntryTitle());
                 helper.setText(appendUnsubscribeHtml(parseEmails(entryEmail.getEntryText()), entryEmail.getSeriesId()), true);
 
