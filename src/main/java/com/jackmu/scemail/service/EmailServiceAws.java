@@ -73,14 +73,14 @@ public class EmailServiceAws implements EmailService{
     }
 
     @Override
-    @Scheduled(cron = "0 0 6 * * *")
+    @Scheduled(cron = "0 0 6 * * *", zone = "America/New_York")
     public void scheduleSendEmails(){
         List<EntryEmailDTO> readyEmails = subscriptionRepository.findEmailsBySendDate();
         sendEmails(readyEmails);
     }
 
     @Override
-    @Scheduled(cron = "0 0 8 * * *")
+    @Scheduled(cron = "0 0 7 * * *", zone = "America/New_York")
     public void deleteFinishedSeries(){
         subscriptionRepository.deleteFinishedSubscriptions();
     }
