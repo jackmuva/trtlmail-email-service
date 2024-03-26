@@ -35,7 +35,14 @@ public class EmailServiceAws implements EmailService{
                 helper.setBcc(getEmails(entryEmail));
                 helper.setFrom("trtlpost@trtlpost.com", "Trtlpost");
                 helper.setSubject(entryEmail.getSeriesTitle() + " : " + entryEmail.getEntryTitle());
-                helper.setText(appendUnsubscribeHtml(parseEmails(entryEmail.getEntryText()), entryEmail.getSeriesId()), true);
+                helper.setText(
+                        appendHtmlStyling(
+                            appendUnsubscribeHtml(
+                                parseEmails(entryEmail.getEntryText()), entryEmail.getSeriesId()
+                            )
+                        ),
+                        true
+                );
 
                 mailSender.send(message);
 
@@ -45,6 +52,18 @@ public class EmailServiceAws implements EmailService{
                 e.printStackTrace();
             }
         }
+    }
+
+    public String appendHtmlStyling(String emailHtml){
+        String prefix = "<html><head><style>" +
+                "body {padding: 1.5rem; " +
+                "flex-direction: column; " +
+                "width: 50%; " +
+                "box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); " +
+                "border-radius: 1rem; }" +
+                "</style></head><body>";
+        String suffix = "</body></html>";
+        return prefix + emailHtml + suffix;
     }
 
     public String appendUnsubscribeHtml(String emailHtml, Long seriesId){
