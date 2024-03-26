@@ -38,7 +38,8 @@ public class EmailServiceAws implements EmailService{
                 helper.setText(
                         appendHtmlStyling(
                             appendUnsubscribeHtml(
-                                parseEmails(entryEmail.getEntryText()), entryEmail.getSeriesId()
+                                parseEmails(entryEmail.getEntryText()),
+                                entryEmail.getSeriesId()
                             )
                         ),
                         true
@@ -55,14 +56,15 @@ public class EmailServiceAws implements EmailService{
     }
 
     public String appendHtmlStyling(String emailHtml){
-        String prefix = "<html><head><style>" +
-                "body {padding: 1.5rem; " +
+        String prefix = "<div style = \"" +
+                "padding: 1.5rem; " +
                 "flex-direction: column; " +
                 "width: 50%; " +
-                "box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); " +
-                "border-radius: 1rem; }" +
-                "</style></head><body>";
-        String suffix = "</body></html>";
+                "border-radius: 1rem; " +
+                "border-color: #C9C9F7; " +
+                "border-style: inset; " +
+                "\" >";
+        String suffix = "</div>";
         return prefix + emailHtml + suffix;
     }
 
