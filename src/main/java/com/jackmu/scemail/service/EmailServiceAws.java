@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -56,14 +55,27 @@ public class EmailServiceAws implements EmailService{
     }
 
     public String appendHtmlStyling(String emailHtml){
-        String prefix = "<div style = \"" +
-                "padding: 1.5rem; " +
-                "flex-direction: column; " +
-                "width: 50%; " +
-                "border-radius: 1rem; " +
-                "border-color: #C9C9F7; " +
-                "border-style: inset; " +
-                "\" >";
+        String prefix = "<head><style type=\"text/css\">" +
+                ".content{ " +
+                    "padding: 1.5rem; " +
+                    "flex-direction: column; " +
+                    "width: 50%; " +
+                    "border-radius: 1rem; " +
+                    "border-color: #C9C9F7; " +
+                    "border-style: inset; " +
+                "} " +
+                "@media only screen and (max-device-width: 479px) { " +
+                    ".content{ "+
+                        "width: 100%; " +
+                        "padding: 1.5rem; " +
+                        "flex-direction: column; " +
+                        "border-radius: 1rem; " +
+                        "border-color: #C9C9F7; " +
+                        "border-style: inset; " +
+                    "} " +
+                " }" +
+                "</style></head>" +
+                "<div class = \"content\">";
         String suffix = "</div>";
         return prefix + emailHtml + suffix;
     }
