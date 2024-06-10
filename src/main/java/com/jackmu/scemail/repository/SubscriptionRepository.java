@@ -30,11 +30,11 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
             "AND article_num > series.num_entries", nativeQuery = true)
     void deleteFinishedSubscriptions();
 
-    @Query(value = "SELECT finished_subs.series_id, COUNT(*) AS num_finished_series FROM (" +
+    @Query(value = "SELECT finished_subs.series_id AS seriesId, COUNT(*) AS numFinishedSeries FROM (" +
             "SELECT Subscription.series_id " +
             "FROM Subscription " +
             "LEFT JOIN Series ON Subscription.series_id = Series.series_id " +
-            "WHERE Subscription.article_num > Series.num_entries) AS finished_subs " +
+            "WHERE Subscription.article_num >= Series.num_entries) AS finished_subs " +
             "GROUP BY finished_subs.series_id",
         nativeQuery = true)
     List<FinishedSeriesCountsDTO> findFinishedCounts();
