@@ -14,6 +14,7 @@ public class CommandLineRunnerStartup implements CommandLineRunner {
     @Override
     public void run(String...args) throws Exception {
         emailService.scheduleSendEmails();
+        emailService.decrementReaderCount();
         emailService.deleteFinishedSeries();
     }
 }

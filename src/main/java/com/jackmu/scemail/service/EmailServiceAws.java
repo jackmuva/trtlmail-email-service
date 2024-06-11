@@ -1,6 +1,8 @@
 package com.jackmu.scemail.service;
 
+import com.jackmu.scemail.model.FinishedSeriesCountsDTO;
 import com.jackmu.scemail.model.Subscription;
+import com.jackmu.scemail.repository.SeriesRepository;
 import com.jackmu.scemail.repository.SubscriptionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -21,6 +23,8 @@ import javax.mail.internet.MimeMessage;
 public class EmailServiceAws implements EmailService{
     @Autowired
     private SubscriptionRepository subscriptionRepository;
+    @Autowired
+    private SeriesRepository seriesRepository;
     @Autowired
     private JavaMailSender mailSender;
     private static final Logger LOGGER = Logger.getLogger(EmailServiceAws.class.getName());
@@ -109,6 +113,13 @@ public class EmailServiceAws implements EmailService{
     public void scheduleSendEmails(){
         List<EntryEmailDTO> readyEmails = subscriptionRepository.findEmailsBySendDate();
         sendEmails(readyEmails);
+    }
+
+    @Override
+    public void decrementReaderCount(){
+        for(FinishedSeriesCountsDTO finishedSeriesCounts : subscriptionRepository.findFinishedCounts()){
+            seriesRepository.decrementCurrentReaders(finishedSeriesCounts.getSeriesId(), finishedSeriesCounts.getNumFinishedSeries());
+        }
     }
 
     @Override
