@@ -11,7 +11,6 @@ API's responsible for handling REST processes for trtlmail-web
 - You can also run `docker run --env-file ./.env -p 5000:5000  514832027284.dkr.ecr.us-east-1.amazonaws.com/trtmail-email:latest` to run the aws image
 
 ### To deploy to ECS:
-1) mvn clean package
-2) Open Dockerhub
-3) Run the deploy.sh script
-4) Check that service in ECS has at least 1 desirable task
+1) Open Dockerhub 
+2) Run the deploy.sh script 
+3) Check that service in ECS has at least 1 desirable task
