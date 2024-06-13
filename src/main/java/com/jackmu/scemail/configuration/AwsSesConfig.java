@@ -14,7 +14,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import java.util.Map;
 
 @Configuration
-@Profile("!local")
+@Profile("!local-profile")
 public class AwsSesConfig {
     @Bean
     public AmazonSimpleEmailService amazonSimpleEmailService(){
