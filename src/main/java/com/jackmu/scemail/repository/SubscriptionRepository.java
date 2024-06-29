@@ -34,7 +34,7 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
             "SELECT Subscription.series_id " +
             "FROM Subscription " +
             "LEFT JOIN Series ON Subscription.series_id = Series.series_id " +
-            "WHERE Subscription.article_num >= Series.num_entries) AS finished_subs " +
+            "WHERE Subscription.article_num > Series.num_entries) AS finished_subs " +
             "GROUP BY finished_subs.series_id",
         nativeQuery = true)
     List<FinishedSeriesCountsDTO> findFinishedCounts();
