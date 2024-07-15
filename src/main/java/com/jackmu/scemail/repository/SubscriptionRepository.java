@@ -43,7 +43,7 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
             "Subscription.series_id AS seriesId, Subscription.article_num AS articleNum " +
             "FROM Subscription LEFT JOIN Entry ON Entry.series_Id = Subscription.series_Id AND Subscription.article_num = entry.order_num " +
             "LEFT join Series ON Series.series_Id = Subscription.series_Id " +
-            "WHERE Subscription.send_Date = CURRENT_DATE ", nativeQuery = true)
+            "WHERE Subscription.send_Date <= CURRENT_DATE ", nativeQuery = true)
     List<EntryEmailDTO> findEmailsBySendDate();
 
     List<Subscription> findAllByArticleNumAndSeriesId(Integer articleNum, Long seriesId);
@@ -51,7 +51,7 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
     @Modifying
     @Transactional
     @Query(value = "UPDATE Subscription SET send_date = (send_date + (Series.cadence * INTERVAL '1 day')) FROM Series " +
-            "WHERE Subscription.series_id = Series.series_id AND Subscription.send_date = CURRENT_DATE " +
+            "WHERE Subscription.series_id = Series.series_id AND Subscription.send_date <= CURRENT_DATE " +
             "AND Subscription.article_num = :articleNum AND Subscription.series_id = :seriesId", nativeQuery = true)
     void updateSendDate(@Param("articleNum") Integer articleNum,
                         @Param("seriesId") Long seriesId);
